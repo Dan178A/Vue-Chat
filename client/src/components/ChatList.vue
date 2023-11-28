@@ -4,7 +4,7 @@
         <section ref="messagesRef" class="chatList">
             <ul>
                 <div v-for="(message, index) in bots[currentBotIndex].messages" :key="index">
-                    <li v-if="message.sender ==='user' " class="chat-user">
+                    <li v-if="message.sender === 'user'" class="chat-user">
                         <div class="chat-img"><img src="assets/user.png"></div>
                         <div class="time"><cite>{{ message.sender }}<i>{{ message.time }}</i></cite></div>
                         <div class="chat-content" style="white-space: pre-wrap;" v-text="message.content"></div>
@@ -19,10 +19,15 @@
         </section>
 
         <section class="foot">
-            <mt-field id="txtContent" v-model="content" class="con" placeholder="Please enter your prompt.">
+            <mt-field id="txtContent" v-model="content" class="con" placeholder="Please enter your prompt."
+                style="border-radius: 1.25rem; background: #f5f5f5; color: #fff;">
             </mt-field>
             <span class="btn btn-send" v-on:click="sendMsg">
-                Send
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <path d="M22 2L11 13" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    <path d="M22 2L15 22L11 13L2 9L22 2Z" stroke="white" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round" />
+                </svg>
             </span>
         </section>
     </div>
@@ -40,17 +45,17 @@ export default {
     components: {
         Header
     },
-    data () {
+    data() {
         return {
             content: '',
             records: [], // chat record
         }
     },
     computed: {
-        currentBotIndex () {
+        currentBotIndex() {
             return this.$store.state.currentBotIndex
         },
-        bots () {
+        bots() {
             return this.$store.state.bots
         }
     },
@@ -124,16 +129,16 @@ export default {
 }
 </script>
 
-<style lang="css" scoped>
+<style lang="scss" scoped>
 .chatList {
     position: absolute;
-    top: 48px;
-    bottom: 48px;
-    left: 17%;
-    right: 0;
-    overflow-y: scroll;
-    overflow-x: hidden;
-    padding: 20px;
+    top: 3.5rem;
+    bottom: 0rem;
+    left: 20%;
+    right: 0px;
+    overflow-y: auto;
+    height: 90%;
+    background-color: #121212;
 }
 
 .chatList ul {
@@ -158,7 +163,6 @@ export default {
     margin-bottom: 10px;
     padding-left: 60px;
     min-height: 68px;
-    /*去掉li的默认小圆点*/
     list-style-type: none;
 }
 
@@ -219,21 +223,22 @@ cite i {
 .chat-user .chat-content {
     margin-left: 0;
     text-align: left;
-    background-color: #33DF83;
+    background-color: #404040;
     color: #fff;
+    border-radius: 1.25rem 0rem 1.25rem 1.25rem;
 }
 
 .chat-others .chat-content {
     margin-left: 0;
     text-align: left;
-    background-color: #33DF83;
+    background-color: #404040;
     color: #fff;
+    border-radius: 0rem 1.25rem 1.25rem 1.25rem;
 }
 
 .chat-content {
     position: relative;
     line-height: 22px;
-    /*margin-top: 25px;*/
     padding: 10px 15px;
     background-color: #eee;
     border-radius: 3px;
@@ -275,40 +280,42 @@ cite i {
 .chat-user .chat-content:after {
     left: auto;
     right: -10px;
-    border-top-color: #33DF83;
+    border-top-color: #404040;
 }
 
 .chat-others .chat-content:after {
     left: -10px;
     right: auto;
-    border-top-color: #33DF83;
+    border-top-color: #404040;
 }
 
 .foot {
     width: 80%;
-    min-height: 48px;
+    min-height: 3rem;
     position: fixed;
     bottom: 0px;
     right: 0px;
-    background-color: #F8F8F8;
 }
 
 .foot .con {
     position: absolute;
     left: 0px;
     right: 0px;
+
 }
 
 .btn {
-    display: inline-block;
+    display: grid;
     vertical-align: top;
     font-size: 30px;
     line-height: 48px;
-    margin-left: 5px;
-    padding: 0 6px;
-    background-color: #33DF83;
+    /* margin-left: 5px; */
+    padding: 0 0.5rem;
+    background-color: #0F969C;
     color: #fff;
     border-radius: 3px;
+    place-items: center;
+    height: 100%;
 }
 
 .btn-send {

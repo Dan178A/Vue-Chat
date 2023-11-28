@@ -3,7 +3,7 @@
     "version": "0.1.0",
     "private": true,
     "scripts": {
-        "serve": "vue-cli-service serve && node src/common/server.ts",
+        "serve": "vue-cli-service serve",
         "build": "vue-cli-service build",
         "lint": "vue-cli-service lint",
         "convert": "cd src && cd common && tsc"
@@ -15,6 +15,8 @@
         "font-awesome": "^4.7.0",
         "mint-ui": "^2.2.13",
         "openai": "^4.20.0",
+        "sass": "^1.69.5",
+        "sass-loader": "^13.3.2",
         "ts-node": "^10.9.1",
         "vue": "^2.6.14",
         "vuex": "^3.6.2"
