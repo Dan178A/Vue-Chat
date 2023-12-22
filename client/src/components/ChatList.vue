@@ -293,7 +293,7 @@ cite i {
     width: 80%;
     min-height: 3rem;
     position: fixed;
-    bottom: 0px;
+    bottom: 2rem;
     right: 0px;
 }
 
