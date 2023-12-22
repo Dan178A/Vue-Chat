@@ -17,12 +17,13 @@ CORS(app, resources={r'/*': {'origins': '*'}})
 
 
 # openai chatGPT configuration--------------------------------------------------------------
-openai.api_key = "https://platform.openai.com/playground"
+openai.api_key = "openai_api_key"
 # init_prompt = ""  # it can make chatGPT be some different role, for example: beautiful girl.
 
 # By global `all_messages`, we can use it easily.
 # it includes every bot&user messages.
 all_messages = {}
+
 
 
 

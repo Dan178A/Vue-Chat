@@ -2,9 +2,6 @@
     <div class="sidebar">
         <section class="layout-sidebar">
 
-            <section class="map">
-                <img src="../../public/assets/5debed560586b8d8e95db9d6c6b19173.jpg" alt="Mapa" width="100%" height="90%">
-            </section>
             <section class="list_avatar">
 
                 <ul class="bot-list">
@@ -86,7 +83,7 @@ export default {
 .sidebar {
     position: absolute;
     width: 20%;
-    background-color: #262626;
+    background-color: #121212;
     top: 0;
     left: 0;
     height: 100%;
@@ -99,14 +96,16 @@ export default {
 
         display: grid;
         place-items: center;
-        grid-auto-rows: 20% 60% 20%;
+        grid-auto-rows: 80% 20%;
+        background-color: #262626;
         grid-template-areas:
             "map"
             "list_avatar"
             "actions_btn";
-        grid-gap: 1rem;
-        height: 100%;
+        height: 95%;
         width: 100%;
+        margin-top: 5%;
+        border-radius: 0rem 2.25rem 2.25rem 0rem;
 
         .map {
             width: 80%;
@@ -127,15 +126,21 @@ export default {
             justify-content: center;
             align-items: center;
 
+            .btn_action:hover {
+                background-color: #4b5563;
+            }
             .btn_action {
                 display: grid;
                 align-items: center;
                 grid-template-columns: 20% 80%;
                 color: #F5F5F5;
+                background-color: #0F969C;
+                border-radius: 1.25rem;
                 white-space: nowrap;
                 width: 100%;
                 height: 20%;
                 gap: 1rem;
+                cursor: pointer;
 
                 & span {
                     display: grid;
@@ -147,6 +152,7 @@ export default {
         & section {
             width: 80%;
             height: 100%;
+            margin-top: 13%;
         }
     }
 

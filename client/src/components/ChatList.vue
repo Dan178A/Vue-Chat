@@ -223,7 +223,7 @@ cite i {
 .chat-user .chat-content {
     margin-left: 0;
     text-align: left;
-    background-color: #404040;
+    background-color: #262626;
     color: #fff;
     border-radius: 1.25rem 0rem 1.25rem 1.25rem;
 }
@@ -280,7 +280,7 @@ cite i {
 .chat-user .chat-content:after {
     left: auto;
     right: -10px;
-    border-top-color: #404040;
+    border-top-color: #262626;
 }
 
 .chat-others .chat-content:after {

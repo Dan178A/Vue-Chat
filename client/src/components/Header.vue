@@ -31,10 +31,12 @@ export default {
   right: 0px;
   left: 20%;
 
-  background-color: #0F969C;
+  background-color: #121212;
   display: flex;
   flex-direction: row;
   align-items: center;
+  padding-left: 1%;
+  border-bottom: 0.05rem solid #262626;
 
   & img {
     width: 50px;
@@ -44,7 +46,7 @@ export default {
   }
   .name {
     font-size: 18px;
-    color: #444;
+    color: #fff;
     margin-left: 10px;
   }
 }
