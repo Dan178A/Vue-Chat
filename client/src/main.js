@@ -1,15 +1,20 @@
-import Vue from 'vue'
-import App from './App'
-import Store from '@/store'
-// MinUI
-import MintUI from 'mint-ui'
-import 'mint-ui/lib/style.css'
+import Vue from 'vue';
+import App from './App.vue';
+import Store from '@/store';
+import router from '@/router';
 
-Vue.use(MintUI)
+// ================================================
+// CONFIGURACIÓN GLOBAL
+// ================================================
 
-Vue.config.productionTip = false
+Vue.config.productionTip = false;
+
+// ================================================
+// INICIALIZAR APP
+// ================================================
 
 new Vue({
     render: h => h(App),
     store: Store,
-}).$mount('#app')
+    router,
+}).$mount('#app');

@@ -1,132 +1,292 @@
-// Import and use Vuex
-import Vuex from 'vuex'
-import Vue from 'vue'
-import util from '@/common/util'
-import axios from 'axios'
+// ================================================
+// Vue-Chat Store - Gestión de estado global
+// ================================================
 
-Vue.use(Vuex)
+import Vue from 'vue';
+import Vuex from 'vuex';
+import util from '@/common/util';
+import { AuthService, ChatService, ModelService, TokenService } from '@/services/api';
 
-// actions in the corresponding component
-const actions = {
-    // before the chat, use `bots.json` to load bot_name and init_prompt
-    async fetchBots (context) {
-        try {
-            const response = await fetch('bots.json')
-            const data = await response.json()
-            context.commit('INIT_BOTS', data)
-        } catch (error) {
-            console.error(error)
-        }
-    }
-}
+Vue.use(Vuex);
 
-// manipulating data in `state`
-const mutations = {
-    SEND_MESSAGE (state, payload) {
-        // console.log('SEND_MESSAGE in mutations is called.')
-        // bot to user
-        if (payload.receiver === 'user') {
-            for (let bot of state.bots) {
-                if (bot.name === payload.sender) {
-                    bot.messages.push({
-                        content: payload.content,
-                        sender: payload.sender,
-                        receiver: payload.receiver,
-                        time: payload.time,
-                    })
-                }
-            }
-            return
-        }
+// ================================================
+// STATE
+// ================================================
 
-        // user to bot
-        for (let bot of state.bots) {
-            if (bot.name === payload.receiver) {
-                bot.messages.push({
-                    content: payload.content,
-                    sender: payload.sender,
-                    receiver: payload.receiver,
-                    time: payload.time,
-                })
-            }
-        }
-
-    },
-
-    SET_CURRENT_BOT (state, value) {
-        // console.log('SET_CURRENT_BOT in mutation is called.')
-        state.currentBotIndex = value
-    },
-
-    // before the chat, use `bots.json` to load bot_name and init_prompt
-    INIT_BOTS: function (state, value) {
-        for (let bot_name in value) {
-            let init_prompt = value[bot_name]
-            state.bots.push({
-                name: bot_name,
-                avatar: 'assets/' + Math.floor(Math.random() * 10) + '.png',
-                init_prompt: init_prompt,
-                messages: []
-            })
-        }
-        // console.log("init bots are: ",state.bots)
-
-        /*
-        Somehow, if I write the code of sending `init_prompt` in `created()` of other components
-        after initializing the data structure of bots,
-        Code does not perform as expected, so I wrote the code here.
-        I speculate that it is due to the asynchronous execution mechanism of js and some mechanisms of vuex.
-        Fortunately, it is not a big problem to write the code here.
-        If you have better suggestions, please contact me.
-         */
-        // before chat to the bot, send the init_prompt to the bot
-        for (let bot of state.bots) {
-            console.log('send init prompt to ', bot.name)
-
-            // user send init prompts of all bots
-            this.commit('SEND_MESSAGE', {
-                content: bot.init_prompt,
-                sender: 'user',
-                receiver: bot.name,
-                time: util.formatDate.format(new Date(), 'yyyy-MM-dd hh:mm:ss')
-            })
-
-            // make a request to server
-            const param = {
-                'bot': bot.name,
-                'prompt': bot.init_prompt,
-            }
-            const path = `http://${window.location.hostname}:5000/get_answer`
-            axios.post(path, param)
-                .then((res) => {
-                    this.commit('SEND_MESSAGE', {
-                        content: res.data['answer'],
-                        sender: bot.name,
-                        receiver: 'user',
-                        time: util.formatDate.format(new Date(), 'yyyy-MM-dd hh:mm:ss')
-                    })
-                })
-                .catch((error) => {
-                    this.commit('SEND_MESSAGE', {
-                        content: `${bot.name} happened error: ${error}`,
-                        sender: bot.name,
-                        receiver: 'user',
-                        time: util.formatDate.format(new Date(), 'yyyy-MM-dd hh:mm:ss')
-                    })
-                })
-        }
-    }
-}
-
-// Storing data
 const state = {
+    // Autenticación
+    isAuthenticated: TokenService.isAuthenticated(),
+    currentUser: TokenService.getUser(),
+    token: TokenService.getToken(),
+
+    // Chat
     currentBotIndex: 0,
     bots: [],
-}
+    isLoading: false,
+    error: null,
 
-// Create and export Store
+    // Modelos
+    availableModels: {
+        openai: [],
+        ollama: [],
+    },
+    currentProvider: 'ollama', // openai | ollama
+
+    // UI
+    theme: 'dark', // dark | light
+    streaming: false,
+};
+
+// ================================================
+// MUTATIONS
+// ================================================
+
+const mutations = {
+    // Autenticación
+    SET_AUTH(state, { token, user }) {
+        state.isAuthenticated = true;
+        state.currentUser = user;
+        state.token = token;
+    },
+
+    CLEAR_AUTH(state) {
+        state.isAuthenticated = false;
+        state.currentUser = null;
+        state.token = null;
+    },
+
+    // Bots
+    SET_BOTS(state, bots) {
+        state.bots = bots;
+    },
+
+    SET_CURRENT_BOT(state, index) {
+        state.currentBotIndex = index;
+    },
+
+    // Mensajes
+    ADD_MESSAGE(state, payload) {
+        const { botName, message } = payload;
+        const bot = state.bots.find(b => b.name === botName);
+        if (bot) {
+            bot.messages.push(message);
+        }
+    },
+
+    CLEAR_BOT_MESSAGES(state, botName) {
+        const bot = state.bots.find(b => b.name === botName);
+        if (bot) {
+            bot.messages = [];
+        }
+    },
+
+    // Estado de carga
+    SET_LOADING(state, loading) {
+        state.isLoading = loading;
+    },
+
+    // Error
+    SET_ERROR(state, error) {
+        state.error = error;
+    },
+
+    CLEAR_ERROR(state) {
+        state.error = null;
+    },
+
+    // Provider
+    SET_PROVIDER(state, provider) {
+        state.currentProvider = provider;
+    },
+
+    // Modelos
+    SET_MODELS(state, models) {
+        state.availableModels = models;
+    },
+
+    // Streaming
+    SET_STREAMING(state, streaming) {
+        state.streaming = streaming;
+    },
+
+    // Tema
+    SET_THEME(state, theme) {
+        state.theme = theme;
+    },
+};
+
+// ================================================
+// ACTIONS
+// ================================================
+
+const actions = {
+    // Cargar bots desde JSON
+    async fetchBots({ commit }) {
+        try {
+            const response = await fetch('bots.json');
+            const data = await response.json();
+            const botsArray = [];
+
+            for (const [botName, initPrompt] of Object.entries(data)) {
+                botsArray.push({
+                    name: botName,
+                    avatar: `assets/${Math.floor(Math.random() * 10)}.png`,
+                    initPrompt: initPrompt,
+                    messages: [],
+                    provider: 'ollama', // Por defecto
+                    model: null,
+                });
+            }
+
+            commit('SET_BOTS', botsArray);
+            return botsArray;
+        } catch (error) {
+            console.error('Error fetching bots:', error);
+            commit('SET_ERROR', 'Failed to load bots');
+        }
+    },
+
+    // Login
+    async login({ commit }, username) {
+        commit('SET_LOADING', true);
+        commit('CLEAR_ERROR');
+
+        try {
+            const result = await AuthService.login(username);
+            commit('SET_AUTH', { token: result.token, user: result.user });
+            return result;
+        } catch (error) {
+            const message = error.response?.data?.message || 'Login failed';
+            commit('SET_ERROR', message);
+            throw error;
+        } finally {
+            commit('SET_LOADING', false);
+        }
+    },
+
+    // Logout
+    logout({ commit }) {
+        AuthService.logout();
+        commit('CLEAR_AUTH');
+    },
+
+    // Enviar mensaje
+    async sendMessage({ commit, state }, { message, botName, provider, model, initPrompt }) {
+        const bot = state.bots.find(b => b.name === botName);
+        if (!bot) return;
+
+        commit('SET_LOADING', true);
+        commit('CLEAR_ERROR');
+
+        // Agregar mensaje del usuario
+        const userMessage = {
+            content: message,
+            sender: 'user',
+            receiver: botName,
+            time: util.formatDate.format(new Date(), 'yyyy-MM-dd HH:mm:ss'),
+        };
+        commit('ADD_MESSAGE', { botName, message: userMessage });
+
+        try {
+            const response = await ChatService.sendMessage({
+                message,
+                bot: botName,
+                provider: provider || bot.provider || 'ollama',
+                model: model || bot.model,
+                session_id: 'default',
+                init_prompt: initPrompt || bot.initPrompt,
+                clear_context: false,
+            });
+
+            if (response.status === 'success') {
+                const botMessage = {
+                    content: response.answer,
+                    sender: botName,
+                    receiver: 'user',
+                    time: util.formatDate.format(new Date(), 'yyyy-MM-dd HH:mm:ss'),
+                };
+                commit('ADD_MESSAGE', { botName, message: botMessage });
+                return response;
+            } else {
+                throw new Error(response.message || 'Failed to get response');
+            }
+        } catch (error) {
+            const errorMessage = {
+                content: `Error: ${error.response?.data?.message || error.message}`,
+                sender: botName,
+                receiver: 'user',
+                time: util.formatDate.format(new Date(), 'yyyy-MM-dd HH:mm:ss'),
+            };
+            commit('ADD_MESSAGE', { botName, message: errorMessage });
+            commit('SET_ERROR', error.message);
+            throw error;
+        } finally {
+            commit('SET_LOADING', false);
+        }
+    },
+
+    // Limpiar conversación
+    async clearConversation({ commit }, botName) {
+        try {
+            await ChatService.clearChat(botName);
+            commit('CLEAR_BOT_MESSAGES', botName);
+        } catch (error) {
+            console.error('Error clearing conversation:', error);
+        }
+    },
+
+    // Cargar modelos disponibles
+    async loadModels({ commit }) {
+        try {
+            const response = await ModelService.listModels();
+            if (response.status === 'success') {
+                commit('SET_MODELS', response.models);
+            }
+        } catch (error) {
+            console.error('Error loading models:', error);
+        }
+    },
+
+    // Cambiar provider
+    setProvider({ commit }, provider) {
+        commit('SET_PROVIDER', provider);
+    },
+};
+
+// ================================================
+// GETTERS
+// ================================================
+
+const getters = {
+    currentBot(state) {
+        return state.bots[state.currentBotIndex] || null;
+    },
+
+    currentBotMessages(state) {
+        const bot = state.bots[state.currentBotIndex];
+        return bot ? bot.messages : [];
+    },
+
+    isLoggedIn(state) {
+        return state.isAuthenticated;
+    },
+
+    ollamaModels(state) {
+        return state.availableModels.ollama || [];
+    },
+
+    openaiModels(state) {
+        return state.availableModels.openai || [];
+    },
+};
+
+// ================================================
+// EXPORT STORE
+// ================================================
+
 export default new Vuex.Store({
-    actions: actions,
-    mutations: mutations,
-    state: state
-})
+    state,
+    mutations,
+    actions,
+    getters,
+});

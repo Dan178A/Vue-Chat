@@ -1,72 +1,76 @@
 <template>
-    <div class="app">
-        <SideBar></SideBar>
-        <ChatList></ChatList>
+    <div id="app">
+        <router-view />
     </div>
 </template>
 
 <script>
-
-import SideBar from '@/components/SideBar.vue'
-import ChatList from '@/components/ChatList.vue'
-
 export default {
-    name: 'app',
-    components: {
-        ChatList,
-        SideBar,
-    }
-}
+    name: 'App',
+};
 </script>
 
-<style>
-.app {
-    display: flex;
-    flex-direction: row;
-    height: 100vh;
-    background-color: #121212;
+<style lang="scss">
+// ================================================
+// ESTILOS GLOBALES
+// ================================================
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-body {
-    height: 100vh;
-    overflow: hidden;
-
-    /* 156.25% */
+html, body {
+    height: 100%;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0c29;
+    color: white;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
-p {
-    color: #F5F5F5;
-    font-family: Inter;
-    font-size: 1rem;
-    font-style: normal;
-    font-weight: 500;
-    line-height: 1.5625rem;
+#app {
+    height: 100%;
 }
 
+// ================================================
+// SCROLLBAR
+// ================================================
 
-/* Estilos para los scroll en navegadores WebKit (Chrome, Safari) */
 ::-webkit-scrollbar {
     width: 8px;
-    background-color: #f5f5f5;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-    background-color: #0a1b2d;
+    background: rgba(255, 255, 255, 0.15);
     border-radius: 4px;
+
+    &:hover {
+        background: rgba(255, 255, 255, 0.25);
+    }
 }
 
-/* Estilos para los scroll en navegadores Firefox */
-body {
-    scrollbar-width: thin;
-    scrollbar-color: #ffffff #0a1b2d;
+// ================================================
+// SELECCIÓN
+// ================================================
+
+::selection {
+    background: rgba(102, 126, 234, 0.4);
+    color: white;
 }
 
-body::-webkit-scrollbar-track {
-    background-color: #f5f5f5;
-}
+// ================================================
+// FOCUS
+// ================================================
 
-body::-webkit-scrollbar-thumb {
-    background-color: #0a1b2d;
-    border-radius: 4px;
+:focus-visible {
+    outline: 2px solid #667eea;
+    outline-offset: 2px;
 }
 </style>
