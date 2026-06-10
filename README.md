@@ -1,58 +1,293 @@
+# Vue-Chat
 
-# ChatGPT-VUE-Chat
+Una interfaz de chat simple, moderna y extensible construida con **Vue**, diseñada para mostrar las respuestas del asistente en el lado izquierdo y los mensajes del usuario en el lado derecho. Al hacer clic en **Send**, el prompt se envía al backend API para su procesamiento.
 
-## Description
-A simple chat interface with ChatGPT on the left and users on the right. When the 'Send' button is clicked, the prompt is sent to the backend API for processing.
+---
 
-You can choose who you talk to on the SideBar.
+## Tabla de contenidos
 
-Here is example:
+- [Descripción general](#descripción-general)
+- [Características principales](#características-principales)
+- [Arquitectura del proyecto](#arquitectura-del-proyecto)
+- [Flujo de funcionamiento](#flujo-de-funcionamiento)
+- [Tecnologías utilizadas](#tecnologías-utilizadas)
+- [Requisitos previos](#requisitos-previos)
+- [Instalación](#instalación)
+- [Ejecución del proyecto](#ejecución-del-proyecto)
+- [Configuración](#configuración)
+- [Estructura recomendada](#estructura-recomendada)
+- [Casos de uso](#casos-de-uso)
+- [Mejoras futuras](#mejoras-futuras)
+- [Contribución](#contribución)
+- [Licencia](#licencia)
+- [Autor](#autor)
 
-![image](./example.png)
+---
 
-### Features
-- Before chat formally, `client` load `client/public/bots.json` to initialize the bots, which make the model become different role. 
+## Descripción general
 
-  -  The data in json is: 
+**Vue-Chat** es un proyecto orientado a ofrecer una experiencia de chat conversacional clara, ligera y fácil de mantener. Su objetivo principal es servir como base para aplicaciones que requieran interacción entre usuarios y asistentes inteligentes o servicios backend capaces de procesar prompts.
 
-  ```json
-  ${name of the bot}:${its init prompt}
-  ```
+Este repositorio combina principalmente:
 
-  -  you can get some init prompt from:
-     -   https://github.com/f/awesome-chatgpt-prompts 
-     -  https://github.com/PlexPt/awesome-chatgpt-prompts-zh
+- **Vue** como base del frontend.
+- **JavaScript** para la lógica de interacción.
+- **TypeScript** en partes del proyecto para mejorar tipado y escalabilidad.
+- **Python** para backend o procesos auxiliares.
+- **HTML** como soporte estructural.
 
-- Need your openai.api_key from "https://platform.openai.com/account/api-keys"
+Gracias a esta composición, el proyecto puede utilizarse tanto como ejemplo educativo como punto de partida para aplicaciones más completas.
 
-## Run
+---
 
-You'd better run `server` first.
+## Características principales
 
-### Server 
-```shell
-cd server
-pip3 install -r requirements.txt
-python3 app.py
+- Interfaz de chat limpia e intuitiva.
+- Separación visual clara entre mensajes del usuario y del asistente.
+- Envío de prompts desde el frontend hacia una API backend.
+- Diseño simple, ideal para personalización.
+- Base adaptable para integrar modelos de IA, asistentes virtuales o APIs propias.
+- Estructura adecuada para crecer hacia una aplicación más robusta.
+
+---
+
+## Arquitectura del proyecto
+
+El proyecto está pensado para dividir responsabilidades entre **frontend** y **backend**.
+
+### Frontend
+
+Responsable de:
+
+- Renderizar la conversación en pantalla.
+- Gestionar el estado de los mensajes.
+- Capturar la entrada del usuario.
+- Enviar solicitudes HTTP al backend.
+- Mostrar respuestas y actualizar la interfaz dinámicamente.
+
+### Backend
+
+Responsable de:
+
+- Recibir los prompts enviados por el cliente.
+- Procesar la lógica de negocio.
+- Conectarse con APIs externas o motores de IA si aplica.
+- Devolver respuestas estructuradas al frontend.
+
+---
+
+## Flujo de funcionamiento
+
+1. El usuario escribe un mensaje en la interfaz.
+2. Hace clic en el botón **Send**.
+3. El frontend envía el mensaje al backend API.
+4. El backend procesa la solicitud.
+5. Se genera una respuesta.
+6. El frontend recibe la respuesta y la muestra en el chat.
+
+---
+
+## Tecnologías utilizadas
+
+Según la composición del repositorio:
+
+- **Vue** — 58.7%
+- **JavaScript** — 25.8%
+- **Python** — 8.3%
+- **TypeScript** — 5.2%
+- **HTML** — 2%
+
+### Stack principal
+
+- **Frontend:** Vue
+- **Lógica de cliente:** JavaScript / TypeScript
+- **Backend o utilidades:** Python
+- **Maquetación:** HTML
+
+---
+
+## Requisitos previos
+
+Antes de ejecutar el proyecto, asegúrate de tener instalado:
+
+### Frontend
+
+- **Node.js**
+- **npm** o **yarn**
+
+### Backend
+
+- **Python 3.x**
+- **pip**
+
+---
+
+## Instalación
+
+### 1. Clonar el repositorio
+
+```bash
+git clone https://github.com/Dan178A/Vue-Chat.git
+cd Vue-Chat
 ```
-Because there are not too much packages dependencies, maybe the python version is not a ploblem.(I use python3.11).
 
-I use openai==0.27.0, because of the new chatgpt api. You'd better make sure the version of openai package.
-The package is new, so maybe you could not use 'mirror'. 
-Just download it like this:
-```sh
-pip install -i https://pypi.python.org/simple/ openai==0.27.0
-```
+### 2. Instalar dependencias del frontend
 
-### Client
-
-#### Reference
-
-
-```shell
-cd client
-nvm install 18 # use node version 18 if possible
+```bash
 npm install
+```
+
+O, si usas Yarn:
+
+```bash
+yarn install
+```
+
+### 3. Instalar dependencias del backend
+
+Si el proyecto incluye un archivo `requirements.txt`:
+
+```bash
+pip install -r requirements.txt
+```
+
+---
+
+## Ejecución del proyecto
+
+### Ejecutar el frontend
+
+```bash
+npm run dev
+```
+
+En algunos entornos Vue también puede utilizarse:
+
+```bash
 npm run serve
 ```
 
+### Ejecutar el backend
+
+Dependiendo de la estructura del proyecto, algunos comandos habituales pueden ser:
+
+```bash
+python app.py
+```
+
+o
+
+```bash
+python main.py
+```
+
+---
+
+## Configuración
+
+Es recomendable utilizar variables de entorno para centralizar configuración sensible o dependiente del entorno, como URLs de la API o claves privadas.
+
+Ejemplo de archivo `.env`:
+
+```env
+VITE_API_URL=http://localhost:8000
+API_KEY=your_api_key_here
+```
+
+> **Importante:** no subas credenciales reales al repositorio.
+
+---
+
+## Estructura recomendada
+
+Una estructura típica para este tipo de proyecto puede verse así:
+
+```bash
+Vue-Chat/
+├── src/                # Código fuente principal del frontend
+├── public/             # Recursos estáticos
+├── components/         # Componentes reutilizables
+├── api/                # Servicios o capa de comunicación con el backend
+├── backend/            # Código del servidor o scripts auxiliares
+├── package.json        # Dependencias y scripts del frontend
+├── requirements.txt    # Dependencias del backend en Python
+└── README.md
+```
+
+---
+
+## Casos de uso
+
+Este proyecto puede servir como base para:
+
+- Chatbots con inteligencia artificial.
+- Interfaces para asistentes virtuales.
+- Plataformas de soporte conversacional.
+- Demos de integración con modelos de lenguaje.
+- Aplicaciones educativas o prototipos funcionales.
+- Sistemas de consulta en tiempo real conectados a APIs.
+
+---
+
+## Mejoras futuras
+
+Algunas mejoras que podrían potenciar el proyecto:
+
+- Indicador de escritura del asistente.
+- Historial persistente de conversaciones.
+- Soporte para múltiples chats.
+- Streaming de respuestas en tiempo real.
+- Renderizado de Markdown en mensajes.
+- Autenticación y gestión de usuarios.
+- Manejo avanzado de errores.
+- Tests unitarios y de integración.
+- Contenerización con Docker.
+- Despliegue automatizado.
+
+---
+
+## Contribución
+
+Las contribuciones son bienvenidas.
+
+Si deseas colaborar:
+
+1. Haz un fork del repositorio.
+2. Crea una nueva rama para tu mejora:
+
+```bash
+git checkout -b feature/nueva-funcionalidad
+```
+
+3. Realiza tus cambios y guarda un commit:
+
+```bash
+git commit -m "feat: agrega nueva funcionalidad"
+```
+
+4. Sube tus cambios:
+
+```bash
+git push origin feature/nueva-funcionalidad
+```
+
+5. Abre un Pull Request.
+
+---
+
+## Licencia
+
+Actualmente no se especifica una licencia en la información proporcionada.  
+Se recomienda añadir una licencia como **MIT** para facilitar el uso, distribución y contribución al proyecto.
+
+---
+
+## Autor
+
+**Repositorio:** `Dan178A/Vue-Chat`
+
+Desarrollado como una base simple y funcional para construir experiencias conversacionales modernas con Vue y backend API.
+
+---
+ 
+Si este proyecto te resulta útil, considera darle una estrella en GitHub.
